@@ -24661,6 +24661,7 @@ zh-Hans = 要添加新书签，请点击对象卡片中的星形图标
 zh-Hant = 要增加新書籤，請點擊對象卡片中的星型圖標
 
 [change_all_bookmarks_color]
+comment = Button to change the color of all bookmarks in the current list
 tags = android-app
 en = Change all bookmarks color
 af = Verander kleur van alle boekmerke
