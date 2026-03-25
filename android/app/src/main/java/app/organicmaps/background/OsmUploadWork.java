@@ -49,7 +49,9 @@ public class OsmUploadWork extends Worker
       Logger.w(TAG, "Application is not initialized, ignoring " + mWorkerParameters);
       return Result.failure();
     }
-    Editor.uploadChanges();
+    int result = Editor.uploadChanges();
+    if (result == Editor.UPLOAD_RESULT_ERROR)
+      return Result.retry();
     return Result.success();
   }
 }

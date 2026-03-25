@@ -582,15 +582,16 @@ bool Editor::HaveMapEditsToUpload(MwmId const & mwmId) const
   return false;
 }
 
-void Editor::UploadChanges(string const & oauthToken, ChangesetTags tags, FinishUploadCallback callback)
+bool Editor::UploadChanges(string const & oauthToken, ChangesetTags tags, FinishUploadCallback callback)
 {
+  /// @todo Unite data and notes uploading in one thread with one callback.
   m_notes->Upload(OsmOAuth::ServerAuth(oauthToken));
 
   if (m_isUploadingNow)
-    return;
+    return false;
 
   if (!HaveMapEditsToUpload(*m_features.Get()))
-    return;
+    return false;
 
   m_isUploadingNow = true;
 
@@ -783,6 +784,8 @@ void Editor::UploadChanges(string const & oauthToken, ChangesetTags tags, Finish
       callback(result);
     }
   });
+
+  return true;
 }
 
 void Editor::SaveUploadedInformation(FeatureID const & fid, UploadInfo const & uploadInfo)
