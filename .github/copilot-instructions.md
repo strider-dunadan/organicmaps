@@ -58,6 +58,13 @@ xcodebuild archive -workspace xcode/omim.xcworkspace -configuration Debug -desti
 - Propose unit tests if needed/relevant
 - Keep the architecture, design and implementation simple and clean, avoid overengineering and unnecessary complexity
 
+## Code review process
+
+For detailed code review instructions including severity tags, review agents, and checklists, read
+`.github/skills/om-review.md`.
+
+When asked to review code or a PR, follow the guidelines in that file.
+
 ## When translating content from English:
 - "bookmark" or "bookmarks" (favorite place, saved by user) , use word "метка" or "метки" for Russian, use word "мітка" or "міткі" for Ukrainian
 - "track" (recorded path on the map that user walked) to Russian, use word "трек"
