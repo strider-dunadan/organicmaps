@@ -130,6 +130,8 @@ public final class Editor
    */
   @Size(3)
   public static native long[] nativeGetStats();
+  @NonNull
+  public static native String nativeGetStatsString();
   public static native void nativeClearLocalEdits();
 
   /**

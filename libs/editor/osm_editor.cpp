@@ -762,6 +762,9 @@ void Editor::UploadChanges(string const & oauthToken, ChangesetTags tags, Finish
         // TODO(AlexZ): Use timestamp from the server.
         uploadInfo.m_uploadAttemptTimestamp = time(nullptr);
 
+        /// @todo I suspect that some (last) features can be uploaded several times.
+        /// UploadChanges -> async update here -> m_isUploadingNow = false, new UploadChanges,
+        /// actual SaveUploadedInformation (on Gui) is called after the new upload.
         GetPlatform().RunTask(Platform::Thread::Gui, [this, id = fti.m_object.GetID(), uploadInfo]()
         {
           // Call Save every time we modify each feature's information.
