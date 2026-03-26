@@ -3,7 +3,6 @@ package app.organicmaps.editor;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
-import android.text.method.ScrollingMovementMethod;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -89,7 +88,6 @@ public class ProfileFragment extends BaseMwmToolbarFragment
     view.findViewById(R.id.osm_notes)
         .setOnClickListener((v) -> Utils.openUrl(requireActivity(), OsmOAuth.getNotesUrl()));
     mEditorStats = view.findViewById(R.id.editor_stats);
-    mEditorStats.setMovementMethod(new ScrollingMovementMethod());
     refreshEditorStats();
     view.findViewById(R.id.upload_edits).setOnClickListener((v) -> {
       OsmUploadWork.startActionUploadOsmChanges(requireContext());

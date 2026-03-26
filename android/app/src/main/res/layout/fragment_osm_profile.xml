@@ -141,21 +141,29 @@
         android:textColor="?colorAccent"
         app:layout_constraintTop_toBottomOf="@id/osm_notes" />
 
-    <TextView
-        android:id="@+id/editor_stats"
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/editor_stats_scroll"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_marginStart="@dimen/margin_base"
         android:layout_marginEnd="@dimen/margin_base"
         android:layout_marginTop="@dimen/margin_half"
-        android:paddingTop="@dimen/margin_half"
-        android:paddingBottom="@dimen/margin_half"
         android:scrollbars="vertical"
-        android:textAppearance="@style/MwmTextAppearance.Body3"
-        android:textIsSelectable="true"
-        android:typeface="monospace"
+        android:fadeScrollbars="false"
         app:layout_constraintTop_toBottomOf="@id/upload_edits"
-        app:layout_constraintBottom_toTopOf="@id/about_osm" />
+        app:layout_constraintBottom_toTopOf="@id/about_osm">
+
+      <TextView
+          android:id="@+id/editor_stats"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:paddingTop="@dimen/margin_half"
+          android:paddingBottom="@dimen/margin_half"
+          android:textAppearance="@style/MwmTextAppearance.Body3"
+          android:textIsSelectable="true"
+          android:typeface="monospace" />
+
+    </androidx.core.widget.NestedScrollView>
 
     <TextView
         android:id="@+id/about_osm"
@@ -173,7 +181,7 @@
         android:textAppearance="@style/MwmTextAppearance.Body3"
         android:textColor="?colorAccent"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editor_stats"
+        app:layout_constraintTop_toBottomOf="@+id/editor_stats_scroll"
         app:layout_constraintVertical_bias="1" />
   </androidx.constraintlayout.widget.ConstraintLayout>
 </LinearLayout>
