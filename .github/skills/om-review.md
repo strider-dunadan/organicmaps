@@ -287,35 +287,114 @@ Compile findings into a structured report with severity tags:
 
 If the user specified `--post` flag and reviewing a PR:
 
-1. **Format comments for GitHub:**
-    - Convert markdown report to GitHub review format
-    - Group issues by file for inline comments
+> **⚠️ CRITICAL: Use the Reviews API**
+>
+> You MUST use `gh api repos/.../pulls/.../reviews` endpoint.
+> This posts the review summary AND all inline comments in ONE request.
+>
+> **Correct:** `gh api repos/{owner}/{repo}/pulls/{pr}/reviews --input -`
+> **Wrong:** `gh api repos/.../pulls/.../comments` (outdated, returns 422)
+> **Wrong:** `gh pr comment` (creates general comment, not inline)
 
-2. **Post review using gh CLI:**
+#### Step 5.1: Get PR metadata
 
-   For overall review comment:
-   ```bash
-   gh pr review <PR_NUMBER> --comment --body "<review summary>"
-   ```
+```bash
+PR_NUMBER=<number>
+HEAD_SHA=$(gh pr view $PR_NUMBER --json headRefOid -q '.headRefOid')
+REPO=$(gh repo view --json nameWithOwner -q '.nameWithOwner')
+```
 
-   For requesting changes (if critical issues found):
-   ```bash
-   gh pr review <PR_NUMBER> --request-changes --body "<review summary>"
-   ```
+#### Step 5.2: Post review with inline comments (ONE API call)
 
-   For approval (if no critical/important issues):
-   ```bash
-   gh pr review <PR_NUMBER> --approve --body "<review summary>"
-   ```
+Use `gh api` with JSON input to post everything at once:
 
-3. **Post inline comments for specific issues:**
-   ```bash
-   gh pr comment <PR_NUMBER> --body "**file:line** - description"
-   ```
+```bash
+cat << 'EOF' | gh api repos/${REPO}/pulls/${PR_NUMBER}/reviews --input -
+{
+  "commit_id": "<HEAD_SHA>",
+  "event": "REQUEST_CHANGES",
+  "body": "<review summary - see format below>",
+  "comments": [
+    {
+      "path": "path/to/file.cpp",
+      "line": 42,
+      "body": "🔴 **Critical:** Description of issue"
+    },
+    {
+      "path": "path/to/other.java",
+      "line": 100,
+      "body": "🟠 **Important:** Description of issue"
+    }
+  ]
+}
+EOF
+```
 
-4. **Inform user of posted review:**
-    - Show link to PR
-    - Summarize what was posted
+**Event types:**
+
+- `REQUEST_CHANGES` — if critical or important issues found
+- `COMMENT` — if only nits or observations
+- `APPROVE` — if no issues found
+
+**Severity emoji prefixes for inline comments:**
+
+- 🔴 Critical
+- 🟠 Important
+- 🟡 Nit
+- 🟣 Pre-existing
+
+#### Step 5.3: Review summary format (the "body" field)
+
+The review body should be comprehensive and include:
+
+```markdown
+## Review Summary
+
+**Scope:** [PR title and what it does]
+**Files reviewed:** [count and types]
+**Security scan:** [Passed / Issues found]
+**Test coverage:** [Covered / Needs tests]
+
+### General Observations
+
+[Things that are not tied to specific lines:]
+
+- Architecture/design considerations
+- Cross-platform impact notes
+- Performance implications
+- Suggestions for future improvements
+
+### Issues Not In Diff
+
+[Any issues found in code that wasn't modified in this PR - can't be posted as inline comments:]
+
+- file.cpp: pre-existing issue description
+
+### Checks Passed
+
+- ✅ Security scan (no secrets, no injection vulnerabilities)
+- ✅ Code style compliance
+- ✅ Memory safety
+- ✅ Thread safety
+- ⚠️ Test coverage needs attention
+
+### Verdict
+
+[Summary of what needs to be fixed before merge, or approval message]
+Found X critical and Y important issues. Please address inline comments.
+```
+
+**Important:** File-specific issues with line numbers go in the `comments` array as inline comments,
+NOT in the body.
+
+#### Step 5.4: Report to user
+
+After posting, report:
+
+- Count of inline comments posted (e.g., "Posted 4 inline comments")
+- Link to PR review
+- Review verdict (approved / changes requested / commented)
+- Any issues that could not be posted inline (line not in diff)
 
 **Note:** If `--post` flag is not specified, only output the review to console.
 
