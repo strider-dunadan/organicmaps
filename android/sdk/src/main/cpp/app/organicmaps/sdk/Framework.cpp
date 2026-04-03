@@ -65,6 +65,7 @@
 
 #include "3party/open-location-code/openlocationcode.h"
 
+#include <algorithm>
 #include <memory>
 #include <string>
 #include <vector>
@@ -1272,13 +1273,14 @@ JNIEXPORT jobject Java_app_organicmaps_sdk_Framework_nativeGetRouteAltitudeData(
     return nullptr;
   }
 
-  // Calculate ascent/descent before simplification to avoid losing intermediate elevation changes.
+  // Calculate ascent/descent and min/max altitude before simplification
+  // to avoid losing intermediate elevation changes and true extremes.
   auto const altInfo = ei.CalculateAltitudesInfo(ElevationInfo::kDefThresholdMWM);
 
   ei.Simplify();
 
   static jclass const dataClass = jni::GetGlobalClassRef(env, "app/organicmaps/sdk/routing/RouteAltitudeData");
-  static jmethodID const constructor = jni::GetConstructorID(env, dataClass, "([D[I[D[DII)V");
+  static jmethodID const constructor = jni::GetConstructorID(env, dataClass, "([D[I[D[DIIII)V");
 
   // Collect simplified data from ElevationInfo.
   std::vector<double> distances;
@@ -1314,7 +1316,8 @@ JNIEXPORT jobject Java_app_organicmaps_sdk_Framework_nativeGetRouteAltitudeData(
   env->SetDoubleArrayRegion(jLons, 0, size, lons.data());
 
   return env->NewObject(dataClass, constructor, jDistances, jElevs, jLats, jLons,
-                        static_cast<jint>(altInfo.GetTotalAscent()), static_cast<jint>(altInfo.GetTotalDescent()));
+                        static_cast<jint>(altInfo.GetTotalAscent()), static_cast<jint>(altInfo.GetTotalDescent()),
+                        static_cast<jint>(altInfo.m_minAltitude), static_cast<jint>(altInfo.m_maxAltitude));
 }
 
 JNIEXPORT void Java_app_organicmaps_sdk_Framework_nativeRouteSetElevationActivePoint(JNIEnv * env, jclass, jdouble lat,

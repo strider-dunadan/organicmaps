@@ -22,7 +22,7 @@ public class RouteAltitudeData
   // Called from JNI.
   @Keep
   public RouteAltitudeData(@NonNull double[] distances, @NonNull int[] altitudes, @NonNull double[] lats,
-                           @NonNull double[] lons, int totalAscent, int totalDescent)
+                           @NonNull double[] lons, int totalAscent, int totalDescent, int minAltitude, int maxAltitude)
   {
     if (distances.length != altitudes.length || distances.length != lats.length || distances.length != lons.length)
       throw new IllegalArgumentException("All arrays must have the same length");
@@ -32,26 +32,8 @@ public class RouteAltitudeData
     mLons = lons;
     mTotalAscent = totalAscent;
     mTotalDescent = totalDescent;
-
-    if (altitudes.length == 0)
-    {
-      mMinAltitude = 0;
-      mMaxAltitude = 0;
-    }
-    else
-    {
-      int minAlt = Integer.MAX_VALUE;
-      int maxAlt = Integer.MIN_VALUE;
-      for (int alt : altitudes)
-      {
-        if (alt < minAlt)
-          minAlt = alt;
-        if (alt > maxAlt)
-          maxAlt = alt;
-      }
-      mMinAltitude = minAlt;
-      mMaxAltitude = maxAlt;
-    }
+    mMinAltitude = minAltitude;
+    mMaxAltitude = maxAltitude;
   }
 
   public int getSize()
