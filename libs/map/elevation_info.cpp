@@ -16,11 +16,11 @@ ElevationInfo::ElevationInfo(std::vector<GeometryLine> const & lines)
     pts.reserve(line.size());
 
     double distance = 0;
-    pts.push_back({distance, line[0].GetAltitude(), line[0].GetPoint()});
+    pts.emplace_back(distance, line[0].GetAltitude(), line[0].GetPoint());
     for (size_t i = 1; i < line.size(); ++i)
     {
       distance += mercator::DistanceOnEarth(line[i - 1].GetPoint(), line[i].GetPoint());
-      pts.push_back({distance, line[i].GetAltitude(), line[i].GetPoint()});
+      pts.emplace_back(distance, line[i].GetAltitude(), line[i].GetPoint());
     }
 
     m_lines.push_back(std::move(pts));
@@ -130,9 +130,9 @@ void ElevationInfo::Assign(std::vector<double> const & segDistances, geometry::A
 
   Points pts;
   pts.reserve(altitudes.size());
-  pts.push_back({0, altitudes[0], points[0]});
+  pts.emplace_back(0, altitudes[0], points[0]);
   for (size_t i = 0; i < segDistances.size(); ++i)
-    pts.push_back({segDistances[i], altitudes[i + 1], points[i + 1]});
+    pts.emplace_back(segDistances[i], altitudes[i + 1], points[i + 1]);
 
   m_lines.clear();
   m_lines.push_back(std::move(pts));
@@ -187,7 +187,7 @@ void ElevationInfo::Simplify(double altitudeDeviation)
   {
     double operator()(PointWithIndex const & a, PointWithIndex const & b, PointWithIndex const & p) const
     {
-      return m2::SquaredDistanceFromSegmentToPoint<m2::PointD>()(a.m_p, b.m_p, p.m_p);
+      return m2::SquaredDistanceFromSegmentToPoint()(a.m_p, b.m_p, p.m_p);
     }
   };
 

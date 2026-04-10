@@ -118,7 +118,7 @@ void ChartGenerator::NormalizeAltitudes(size_t resultPointCount, std::vector<dou
   double prevAlt = 0;
   bool hasPrev = false;
 
-  m_info.ForEachPoint([&](double dist, geometry::Altitude alt)
+  m_info.ForEachPoint([&](double dist, geometry::Altitude alt, m2::PointD const &)
   {
     if (!hasPrev)
     {
