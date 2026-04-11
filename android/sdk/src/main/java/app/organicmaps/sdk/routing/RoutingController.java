@@ -454,6 +454,7 @@ public class RoutingController
     setBuildState(BuildState.NONE);
     setState(State.NONE);
 
+    Framework.nativeRouteRemoveElevationActivePoint();
     applyRemovingIntermediatePointsTransaction();
     if (deleteSavedRoute)
       Framework.nativeDeleteSavedRoutePoints();
