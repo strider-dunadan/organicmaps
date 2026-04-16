@@ -13876,6 +13876,11 @@ vi = Wikipedia
 zh-Hans = 维基百科
 zh-Hant = 維基百科
 
+[article_from_wikipedia]
+comment = Source attribution for Wikipedia articles displayed in the place description screen.
+tags = android-app
+en = Article from wikipedia.org
+
 [wikimedia_commons]
 comment = Place Page link to Wikimedia Commons.
 tags = android-app,apple-maps

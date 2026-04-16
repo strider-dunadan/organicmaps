@@ -20,8 +20,8 @@ body {
   font-family: Roboto, sans-serif;
   line-height: 1.6;
   font-size: calc(14px + 0.5vw);
-  color: #212121;
-  background-color: #EEEEEE;
+  color: var(--text, #212121);
+  background-color: var(--bg, #EEEEEE);
 }
 
 h2, h3 {
@@ -60,7 +60,7 @@ li {
 }
 
 a {
-  color: #249CF2;
+  color: var(--link, #249CF2);
   text-decoration: none;
 }
 
@@ -71,15 +71,6 @@ b {
 sup {
   font-size: 0.6em;
   vertical-align: super;
-}
-
-body.dark {
-  color: #E0E0E0;
-  background-color: #32363A;
-}
-
-body.dark a {
-  color: #4BB9E6;
 }
 
 @media screen and (max-width: 600px) {

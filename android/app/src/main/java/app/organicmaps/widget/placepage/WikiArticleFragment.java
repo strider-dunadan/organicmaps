@@ -2,6 +2,7 @@ package app.organicmaps.widget.placepage;
 
 import android.content.res.Configuration;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,6 +10,7 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -62,11 +64,13 @@ public class WikiArticleFragment extends BaseMwmFragment
 
   private void loadDescription(int bottomInsetPx)
   {
-    String source = mWikiUrl.isEmpty()
-                      ? "<p>" + getString(R.string.article_from_wikipedia) + "</p>"
-                      : "<p><a href='" + mWikiUrl + "'>" + getString(R.string.article_from_wikipedia) + "</a></p>";
+    String source = mWikiUrl.isEmpty() ? "<p>" + getString(R.string.article_from_wikipedia) + "</p>"
+                                       : "<p><a href='" + TextUtils.htmlEncode(mWikiUrl) + "'>"
+                                             + getString(R.string.article_from_wikipedia) + "</a></p>";
 
-    String bodyClass = isDarkMode() ? "dark" : "";
+    String textColor = colorToHex(isDarkMode() ? R.color.text_light : R.color.text_dark);
+    String bgColor = colorToHex(R.color.bg_window);
+    String linkColor = colorToHex(R.color.base_accent);
 
     int bottomPaddingCssPx = (int) (bottomInsetPx / getResources().getDisplayMetrics().density);
     String html =
@@ -74,8 +78,9 @@ public class WikiArticleFragment extends BaseMwmFragment
         + "<meta charset='utf-8'>"
         + "<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no'>"
         + "<link rel='stylesheet' href='wikipedia.css'>"
-        + "<style>body { padding-bottom: " + bottomPaddingCssPx + "px; }</style>"
-        + "</head><body class='" + bodyClass + "'>" + mDescription + source + "</body></html>";
+        + "<style>:root{--text:" + textColor + ";--bg:" + bgColor + ";--link:" + linkColor
+        + "}body{padding-bottom:" + bottomPaddingCssPx + "px}</style>"
+        + "</head><body>" + mDescription + source + "</body></html>";
     mWebView.loadDataWithBaseURL("file:///android_asset/", html, "text/html", "UTF-8", null);
   }
 
@@ -83,5 +88,10 @@ public class WikiArticleFragment extends BaseMwmFragment
   {
     int nightFlags = getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK;
     return nightFlags == Configuration.UI_MODE_NIGHT_YES;
+  }
+
+  private String colorToHex(int colorRes)
+  {
+    return String.format("#%06X", 0xFFFFFF & ContextCompat.getColor(requireContext(), colorRes));
   }
 }
