@@ -31,6 +31,7 @@ import android.view.View;
 import android.view.Window;
 import android.widget.TextView;
 import android.widget.Toast;
+import androidx.activity.SystemBarStyle;
 import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.IntentSenderRequest;
@@ -561,6 +562,13 @@ public class MwmActivity extends BaseMwmFragmentActivity
      */
     if (Map.isEngineCreated())
       onRenderingInitializationFinished();
+  }
+
+  @NonNull
+  @Override
+  protected SystemBarStyle getStatusBarStyle()
+  {
+    return SystemBarStyle.auto(Color.TRANSPARENT, Color.TRANSPARENT);
   }
 
   private void refreshLightStatusBar()
