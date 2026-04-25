@@ -1061,16 +1061,16 @@ public class MwmActivity extends BaseMwmFragmentActivity
     ThemeSwitcher.INSTANCE.synchronizeApplicationTheme();
     ThemeSwitcher.INSTANCE.synchronizeMapStyle(this, mMapController.isRenderingActive());
     refreshSearchToolbar();
-    if (isFullscreen())
-      enterFullscreenIfAllowed();
-    else
-      exitFullscreen();
-    makeNavigationBarTransparentInLightMode();
     if (ChoosePositionMode.get() != ChoosePositionMode.None)
     {
       UiUtils.show(mPointChooser);
       mMapButtonsViewModel.setButtonsHidden(true);
     }
+    else if (isFullscreen())
+      enterFullscreenIfAllowed();
+    else
+      exitFullscreen();
+    makeNavigationBarTransparentInLightMode();
     if (mOnmapDownloader != null)
       mOnmapDownloader.onResume();
 

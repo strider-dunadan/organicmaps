@@ -19,7 +19,6 @@ import androidx.fragment.app.FragmentManager;
 import app.organicmaps.MwmApplication;
 import app.organicmaps.R;
 import app.organicmaps.SplashActivity;
-import app.organicmaps.sdk.util.Config;
 import app.organicmaps.sdk.util.log.Logger;
 import java.util.Objects;
 
@@ -39,11 +38,11 @@ public abstract class BaseMwmFragmentActivity extends AppCompatActivity
   @Override
   protected final void onCreate(@Nullable Bundle savedInstanceState)
   {
-    super.onCreate(savedInstanceState);
     // auto() flips icon appearance with the system theme; subclasses that need a different
     // policy (e.g. MwmActivity.refreshLightStatusBar for the map surface) override at runtime.
     EdgeToEdge.enable(this, SystemBarStyle.auto(Color.TRANSPARENT, Color.TRANSPARENT),
                       SystemBarStyle.auto(Color.TRANSPARENT, Color.TRANSPARENT));
+    super.onCreate(savedInstanceState);
     if (!MwmApplication.from(this).getOrganicMaps().arePlatformAndCoreInitialized())
     {
       final Intent intent = Objects.requireNonNull(getIntent());
