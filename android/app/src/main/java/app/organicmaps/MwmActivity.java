@@ -28,7 +28,6 @@ import android.text.method.LinkMovementMethod;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.Window;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.activity.SystemBarStyle;
@@ -46,7 +45,6 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
-import androidx.core.view.WindowInsetsControllerCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
@@ -510,7 +508,10 @@ public class MwmActivity extends BaseMwmFragmentActivity
     mIsTabletLayout = getResources().getBoolean(R.bool.tabletLayout);
 
     setContentView(R.layout.activity_map);
-    makeNavigationBarTransparentInLightMode();
+    // Override EdgeToEdge's default nav-bar scrim: the map surface provides its own contrast.
+    getWindow().setNavigationBarColor(Color.TRANSPARENT);
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q)
+      getWindow().setNavigationBarContrastEnforced(false);
 
     mPlacePageViewModel = new ViewModelProvider(this).get(PlacePageViewModel.class);
     mMapButtonsViewModel = new ViewModelProvider(this).get(MapButtonsViewModel.class);
@@ -728,6 +729,8 @@ public class MwmActivity extends BaseMwmFragmentActivity
 
   private void showPositionChooser(ChoosePositionMode mode, boolean isBusiness, boolean applyPosition)
   {
+    if (isFullscreen())
+      exitFullscreen();
     closeFloatingToolbarsAndPanels(false);
     UiUtils.show(mPointChooser);
     mMapButtonsViewModel.setButtonsHidden(true);
@@ -1078,7 +1081,6 @@ public class MwmActivity extends BaseMwmFragmentActivity
       enterFullscreenIfAllowed();
     else
       exitFullscreen();
-    makeNavigationBarTransparentInLightMode();
     if (mOnmapDownloader != null)
       mOnmapDownloader.onResume();
 
@@ -2407,16 +2409,6 @@ public class MwmActivity extends BaseMwmFragmentActivity
     Logger.d(TAG, "Trim memory, level = " + level);
     if (level >= TRIM_MEMORY_RUNNING_LOW && level != TRIM_MEMORY_UI_HIDDEN)
       Framework.nativeMemoryWarning();
-  }
-
-  private void makeNavigationBarTransparentInLightMode()
-  {
-    final boolean isLightMode = !app.organicmaps.sdk.util.Utils.isDarkMode(this);
-    final Window window = getWindow();
-    window.setNavigationBarColor(Color.TRANSPARENT);
-    new WindowInsetsControllerCompat(window, window.getDecorView()).setAppearanceLightNavigationBars(isLightMode);
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q)
-      window.setNavigationBarContrastEnforced(false);
   }
 
   private void reportUnsupported()

@@ -38,7 +38,7 @@ public abstract class BaseMwmFragmentActivity extends AppCompatActivity
   @Override
   protected final void onCreate(@Nullable Bundle savedInstanceState)
   {
-    EdgeToEdge.enable(this, getStatusBarStyle(), SystemBarStyle.auto(Color.TRANSPARENT, Color.TRANSPARENT));
+    EdgeToEdge.enable(this, getStatusBarStyle());
     super.onCreate(savedInstanceState);
     if (!MwmApplication.from(this).getOrganicMaps().arePlatformAndCoreInitialized())
     {
