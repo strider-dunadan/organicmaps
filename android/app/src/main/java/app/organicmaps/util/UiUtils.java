@@ -241,10 +241,7 @@ public final class UiUtils
     else
     {
       wic.show(WindowInsetsCompat.Type.systemBars());
-      // If pre-R devices regress with stale inset positions after exiting fullscreen,
-      // uncomment to force a fresh inset dispatch from the decor view (Option B from
-      // plans/android-insets/00_initial_refactoring.md, §P2):
-      // decorView.requestApplyInsets();
+      decorView.requestApplyInsets();
     }
   }
 
