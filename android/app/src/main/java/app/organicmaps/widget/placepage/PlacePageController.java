@@ -93,8 +93,6 @@ public class PlacePageController
     @Override
     public void onChanged(Integer distanceToTop)
     {
-      boolean isCurrentlyActive = mPlacePageBehavior.getState() != BottomSheetBehavior.STATE_HIDDEN;
-      mRoutingPlanViewModel.setIsPlacePageActive(isCurrentlyActive);
       // This callback may be called before insets are updated when resuming the app
       if (mCurrentWindowInsets == null)
         return;
@@ -146,6 +144,10 @@ public class PlacePageController
           Logger.d(TAG, "State change, new = " + PlacePageUtils.toString(newState));
           if (PlacePageUtils.isSettlingState(newState) || PlacePageUtils.isDraggingState(newState))
             return;
+
+          // Drive the routing bottom sheet visibility from settled state changes only, instead of from every
+          // slide tick, so the routing ViewModel gets one update per open/close rather than dozens per drag.
+          mRoutingPlanViewModel.setIsPlacePageActive(!PlacePageUtils.isHiddenState(newState));
 
           PlacePageUtils.updateMapViewport(mCoordinator, mDistanceToTop, mViewportMinHeight);
 
