@@ -148,7 +148,6 @@ public class MwmActivity extends BaseMwmFragmentActivity
   private static final String EXTRA_CONSUMED = "mwm.extra.intent.processed";
   private boolean mIntentConsumed = false;
   private boolean mPreciseLocationDialogShown = false;
-  private boolean mRoutingBottomSheetShown = false;
 
   private static final String[] DOCKED_FRAGMENTS = {SearchFragment.class.getName(), DownloaderFragment.class.getName(),
                                                     EditorHostFragment.class.getName(), ReportFragment.class.getName()};
@@ -949,13 +948,8 @@ public class MwmActivity extends BaseMwmFragmentActivity
   protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState)
   {
     super.onRestoreInstanceState(savedInstanceState);
-    if (mRoutingPlanViewModel != null
-        && Boolean.TRUE.equals(mRoutingPlanViewModel.getShowRoutingBottomSheet().getValue()))
-    {
-      setRoutingBottomSheetActive(true);
-      mRoutingBottomSheetShown = true;
-    }
-
+    // The routing plan fragment is restored by the FragmentManager and re-applies its own saved sheet state,
+    // so there is nothing routing-related to restore here.
     mPowerSaveDisclaimerShown = savedInstanceState.getBoolean(POWER_SAVE_DISCLAIMER_SHOWN, false);
   }
 
@@ -1302,7 +1296,6 @@ public class MwmActivity extends BaseMwmFragmentActivity
         setRoutingBottomSheetActive(true);
         return;
       }
-      mRoutingBottomSheetShown = true;
       mRoutingPlanViewModel.triggerMenuUpdate();
     }
     else
@@ -1347,7 +1340,6 @@ public class MwmActivity extends BaseMwmFragmentActivity
     {
       setRoutingBottomSheetActive(false);
       mRoutingPlanViewModel.setShowRoutingBottomSheet(false);
-      mRoutingBottomSheetShown = false;
       if (completionListener != null)
         completionListener.run();
     }
