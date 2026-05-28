@@ -79,7 +79,7 @@ public class PlacePageController
   // Enabled after the sheet reaches COLLAPSED; prevents dismiss during initial open animation.
   private boolean mEasyDismissEnabled;
   private int mDistanceToTop;
-  private RoutingPlanViewModel mRoutingviewmodel;
+  private RoutingPlanViewModel mRoutingPlanViewModel;
 
   private ValueAnimator mCustomPeekHeightAnimator;
   private PlacePageListener mPlacePageListener;
@@ -94,7 +94,7 @@ public class PlacePageController
     public void onChanged(Integer distanceToTop)
     {
       boolean isCurrentlyActive = mPlacePageBehavior.getState() != BottomSheetBehavior.STATE_HIDDEN;
-      mRoutingviewmodel.setIsPlacePageActive(isCurrentlyActive);
+      mRoutingPlanViewModel.setIsPlacePageActive(isCurrentlyActive);
       // This callback may be called before insets are updated when resuming the app
       if (mCurrentWindowInsets == null)
         return;
@@ -207,7 +207,7 @@ public class PlacePageController
     mPlacePageBehavior.setSkipCollapsed(false);
 
     UiUtils.bringViewToFrontOf(view.findViewById(R.id.pp_buttons_fragment), mPlacePage);
-    mRoutingviewmodel = new ViewModelProvider(requireActivity()).get(RoutingPlanViewModel.class);
+    mRoutingPlanViewModel = new ViewModelProvider(requireActivity()).get(RoutingPlanViewModel.class);
     mViewModel = new ViewModelProvider(requireActivity()).get(PlacePageViewModel.class);
     // place page status bar background
     ViewCompat.setOnApplyWindowInsetsListener(mPlacePage, (v, windowInsets) -> {
@@ -319,7 +319,7 @@ public class PlacePageController
   {
     setPlacePageInteractions(false);
     mPlacePageBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
-    mRoutingviewmodel.setIsPlacePageActive(false);
+    mRoutingPlanViewModel.setIsPlacePageActive(false);
   }
 
   private void resetPlacePageHeightBounds()
