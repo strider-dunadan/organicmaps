@@ -473,19 +473,17 @@ public class MapButtonsController extends Fragment
     updateMenuBadge();
     updateLayerButton();
     updateHelpButtonIcon();
-    ViewCompat.setOnApplyWindowInsetsListener(
-        mFrame, WindowInsetUtils.PaddingInsetsListener.allSides(WindowInsetsCompat.Type.systemBars()
-                                                                | WindowInsetsCompat.Type.displayCutout()));
-    // Fixes insets on older Androids and with a search opened via API on all Androids.
-    if (mFrame.hasWindowFocus())
-      ViewCompat.requestApplyInsets(mFrame);
   }
 
   @Override
-  public void onPause()
+  public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState)
   {
-    ViewCompat.setOnApplyWindowInsetsListener(mFrame, null);
-    super.onPause();
+    super.onViewCreated(view, savedInstanceState);
+    // Must be set before FragmentStateManager adds the frame to its container and requests insets right
+    // after onViewCreated(). Attaching in onResume() misses that dispatch and leaves the padding at zero.
+    ViewCompat.setOnApplyWindowInsetsListener(
+        mFrame, WindowInsetUtils.PaddingInsetsListener.allSides(WindowInsetsCompat.Type.systemBars()
+                                                                | WindowInsetsCompat.Type.displayCutout()));
   }
 
   @Override
