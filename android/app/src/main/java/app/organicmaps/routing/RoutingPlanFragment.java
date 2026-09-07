@@ -168,13 +168,22 @@ public class RoutingPlanFragment extends Fragment implements View.OnLayoutChange
           insets.getInsets(WindowInsetsCompat.Type.systemBars() | WindowInsetsCompat.Type.displayCutout());
       final int leftInset = mCurrentWindowInsets.left;
       final int rightInset = mCurrentWindowInsets.right;
-      final int bottomInset = mCurrentWindowInsets.bottom;
+      // Below API 30 the IME lands in the system-window insets, and the sheet pads itself with them
+      // (paddingBottomSystemWindowInsets), so an open keyboard would inflate the height its offsets come from.
+      final Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+      final int stableBottom = insets.getInsetsIgnoringVisibility(WindowInsetsCompat.Type.systemBars()).bottom;
+      final int bottomInset = Math.min(mCurrentWindowInsets.bottom, stableBottom);
       mTopInset = mCurrentWindowInsets.top;
       mRoutingRoot.setPadding(0, mTopInset, 0, 0);
       if (mRoutingBottomContainer != null)
         mRoutingBottomContainer.setPadding(leftInset, mRoutingBottomContainer.getPaddingTop(), rightInset, 0);
       mButtonsLayout.setPadding(0, 0, 0, bottomInset);
-      return ViewCompat.onApplyWindowInsets(v, insets);
+      return ViewCompat.onApplyWindowInsets(v,
+                                            new WindowInsetsCompat.Builder(insets)
+                                                .setInsets(WindowInsetsCompat.Type.systemBars(),
+                                                           Insets.of(systemBars.left, systemBars.top, systemBars.right,
+                                                                     Math.min(systemBars.bottom, stableBottom)))
+                                                .build());
     });
   }
 
