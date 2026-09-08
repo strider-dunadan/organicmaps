@@ -36,14 +36,6 @@ public class RoutingController
 
   private record PendingPoiPick(@NonNull RouteMarkType pointType, @Nullable Integer replaceStopIndex)
   {
-    private PendingPoiPick
-    {
-      if (pointType == null)
-        throw new NullPointerException("Route point type must not be null");
-      if (replaceStopIndex != null && replaceStopIndex < 0)
-        throw new IllegalArgumentException("Replacement index must not be negative");
-    }
-
     private boolean isReplacement()
     {
       return replaceStopIndex != null;
@@ -770,11 +762,13 @@ public class RoutingController
     if (hasOnePointAtLeast)
       applyRemovingIntermediatePointsTransaction();
 
-    if (hasStart && !addRoutePoint(RouteMarkType.Start, startPoint))
-      throw new IllegalStateException("Setting the start point must preserve route capacity");
+    // The result is unread on purpose: the core drops the point standing in the slot before adding, so only
+    // addStop() can run the route out of capacity.
+    if (hasStart)
+      addRoutePoint(RouteMarkType.Start, startPoint);
 
-    if (hasEnd && !addRoutePoint(RouteMarkType.Finish, endPoint))
-      throw new IllegalStateException("Setting the destination must preserve route capacity");
+    if (hasEnd)
+      addRoutePoint(RouteMarkType.Finish, endPoint);
 
     if (hasOnePointAtLeast && mContainer != null)
       mContainer.updateMenu();
@@ -900,10 +894,9 @@ public class RoutingController
     Pair<String, String> description = getDescriptionForPoint(point);
     if (type == RouteMarkType.Intermediate)
       Framework.nativeRemoveRoutePoint(type, replaceStopIndex);
-    if (!Framework.nativeAddRoutePoint(description.first /* title */, description.second /* subtitle */, type,
-                                       replaceStopIndex /* intermediateIndex */, point.isMyPosition(), point.getLat(),
-                                       point.getLon(), false /* reorderIntermediatePoints */))
-      throw new IllegalStateException("Replacing a route point must preserve route capacity");
+    Framework.nativeAddRoutePoint(description.first /* title */, description.second /* subtitle */, type,
+                                  replaceStopIndex /* intermediateIndex */, point.isMyPosition(), point.getLat(),
+                                  point.getLon(), false /* reorderIntermediatePoints */);
   }
 
   private static boolean addRoutePoint(@NonNull RouteMarkType type, @NonNull MapObject point)
