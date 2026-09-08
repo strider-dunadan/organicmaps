@@ -461,6 +461,7 @@ public class RoutingController
     if (mContainer != null)
       mContainer.onRemovedStop();
     resetToPlanningStateIfNavigating();
+    resetPoiPickState();
   }
 
   public void launchPlanning()
