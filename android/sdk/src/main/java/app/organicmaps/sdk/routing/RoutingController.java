@@ -693,12 +693,30 @@ public class RoutingController
     return mPendingPoiPick;
   }
 
-  public boolean hasMyPositionRoutePoint()
+  // A pick overwrites the point of its own slot, so a my-position point standing there is replaced by it
+  // rather than duplicated. Adding a stop overwrites nothing.
+  private static boolean isReplacedByPick(@NonNull RouteMarkData point, @NonNull PendingPoiPick pick)
   {
+    if (point.mPointType != pick.pointType())
+      return false;
+    if (pick.pointType() != RouteMarkType.Intermediate)
+      return true;
+    return pick.isReplacement() && point.mIntermediateIndex == pick.replaceStopIndex();
+  }
+
+  // The core keeps a single my-position mark, so adding it to a second slot pulls it out of the one it
+  // already holds (RoutingManager::AddRoutePoint), silently emptying that one. The shortcut is offered only
+  // where the route has no such point, or where the pick replaces the one it has.
+  public boolean canPickMyPosition()
+  {
+    final PendingPoiPick pick = mPendingPoiPick;
+    if (pick == null)
+      return false;
+
     for (RouteMarkData point : Framework.nativeGetRoutePoints())
-      if (point.mIsMyPosition)
-        return true;
-    return false;
+      if (point.mIsMyPosition && !isReplacedByPick(point, pick))
+        return false;
+    return true;
   }
 
   public BuildState getBuildState()
