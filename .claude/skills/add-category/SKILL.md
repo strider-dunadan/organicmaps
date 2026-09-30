@@ -116,3 +116,4 @@ Add `"category_name"` to the `m_keys` initializer list.
    ```
    cmake --build build-$YOUR_NAME --target indexer_tests editor_tests && ctest -j --test-dir build-$YOUR_NAME --stop-on-failure --output-on-failure -R "indexer_tests|editor_tests"
    ```
+CI path filter test

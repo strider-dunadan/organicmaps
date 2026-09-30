@@ -222,3 +222,4 @@ These rules apply to all translation files: `data/strings/`, `data/categories*.t
 - prefer contour lines over elevation isolines.
 - prefer shown on the map over technical conditions like “without nearby bus stops”.
 - keep contributor credits out of store notes; they are better suited to a full changelog or news post.
+CI path filter test
